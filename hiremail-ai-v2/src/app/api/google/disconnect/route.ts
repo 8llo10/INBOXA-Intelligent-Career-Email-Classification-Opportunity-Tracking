@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server";import { requireApiUser } from "@/lib/auth";import { query } from "@/lib/db";export async function POST(){try{const u=await requireApiUser();await query("DELETE FROM gmail_connections WHERE user_id=$1",[u.id]);return NextResponse.json({ok:true});}catch{return NextResponse.json({error:"unauthorized"},{status:401});}}

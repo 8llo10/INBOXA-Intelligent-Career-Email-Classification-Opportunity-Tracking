@@ -1,0 +1,4 @@
+import { query } from "@/lib/db";
+export async function getUserFields(userId:string){ const r=await query<{field_key:string}>("SELECT field_key FROM user_fields WHERE user_id=$1 ORDER BY field_key",[userId]); return r.rows.map(x=>x.field_key); }
+export async function setUserFields(userId:string,fields:string[]){ await query("DELETE FROM user_fields WHERE user_id=$1",[userId]); for(const f of [...new Set(fields)]) await query("INSERT INTO user_fields(user_id,field_key) VALUES($1,$2)",[userId,f]); }
+export async function getGmailConnection(userId:string){ const r=await query<{gmail_email:string;refresh_token_ciphertext:string;refresh_token_iv:string;refresh_token_tag:string;connected_at:Date;last_sync_at:Date|null}>("SELECT gmail_email,refresh_token_ciphertext,refresh_token_iv,refresh_token_tag,connected_at,last_sync_at FROM gmail_connections WHERE user_id=$1",[userId]); return r.rows[0]||null; }

@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server";import { requireApiUser } from "@/lib/auth";import { syncUser } from "@/services/sync.service";export async function POST(){try{const u=await requireApiUser();return NextResponse.json(await syncUser(u.id));}catch(e){return NextResponse.json({error:e instanceof Error?e.message:"sync failed"},{status:400});}}
