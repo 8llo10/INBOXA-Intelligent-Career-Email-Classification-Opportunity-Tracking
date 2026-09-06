@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { sha256, encryptSecret } from "@/lib/crypto";
 import { query } from "@/lib/db";
 import { exchangeGoogleCode } from "@/services/gmail.service";
+import { syncUser } from "@/services/sync.service";
 
 export async function GET(req: NextRequest) {
     const state = req.nextUrl.searchParams.get("state");
@@ -128,6 +129,24 @@ export async function GET(req: NextRequest) {
                 enc.tag,
                 x.scope,
             ]
+        );
+
+        console.log("[GMAIL CALLBACK] Gmail connection saved successfully", {
+            email: x.email,
+        });
+
+        try {
+            console.log("[GMAIL SYNC] Initial scan started");
+
+            const result = await syncUser(userId);
+
+            console.log("[GMAIL SYNC] Initial scan completed", result);
+        } catch (syncError) {
+            console.error("[GMAIL SYNC ERROR]", syncError);
+        }
+
+        return NextResponse.redirect(
+            new URL("/?gmail=connected", req.url)
         );
 
         console.log("[GMAIL CALLBACK] Gmail connection saved successfully", {
