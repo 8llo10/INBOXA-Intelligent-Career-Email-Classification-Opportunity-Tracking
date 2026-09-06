@@ -1,11 +1,36 @@
 import { query } from "@/lib/db";
-import type { EmailAnalysis,Category } from "@/ai/types";
-export type EmailRow={id:string;user_id:string;gmail_message_id:string;sender_name:string|null;sender_email:string|null;subject:string;body_text:string;snippet:string;received_at:Date;is_relevant:boolean;professional_score:number;category:Category;category_score:number;detected_field:string;field_score:number;company:string|null;role_title:string|null;opportunity_type:string|null;required_action:string|null;deadline:Date|null;summary:string|null;review_status:string;};
-export async function emailExists(userId:string,gmailId:string){const r=await query("SELECT 1 FROM emails WHERE user_id=$1 AND gmail_message_id=$2",[userId,gmailId]);return !!r.rowCount;}
-export async function insertEmail(userId:string,m:any,a:EmailAnalysis){const id=crypto.randomUUID();await query(`INSERT INTO emails(id,user_id,gmail_message_id,gmail_thread_id,sender_name,sender_email,subject,body_text,snippet,received_at,is_relevant,professional_score,category,category_score,detected_field,field_score,company,role_title,opportunity_type,required_action,deadline,summary,analysis_reasons) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)`,[id,userId,m.gmailMessageId,m.gmailThreadId,m.senderName,m.senderEmail,m.subject,m.bodyText,m.snippet,m.receivedAt,a.isRelevant,a.professionalScore,a.category,a.categoryScore,a.detectedField,a.fieldScore,a.company,a.roleTitle,a.opportunityType,a.requiredAction,a.deadline,a.summary,JSON.stringify(a.reasons)]);return id;}
-export async function listEmails(userId:string,opts:{relevant?:boolean;category?:string;field?:string;limit?:number}={}){const where=["user_id=$1"],params:any[]=[userId];if(opts.relevant!==undefined){params.push(opts.relevant);where.push(`is_relevant=$${params.length}`);}if(opts.category){params.push(opts.category);where.push(`category=$${params.length}`);}if(opts.field){params.push(opts.field);where.push(`detected_field=$${params.length}`);}params.push(Math.min(opts.limit||100,500));const r=await query<EmailRow>(`SELECT * FROM emails WHERE ${where.join(" AND ")} ORDER BY received_at DESC LIMIT $${params.length}`,params);return r.rows;}
-export async function getEmail(userId:string,id:string){const r=await query<EmailRow>("SELECT * FROM emails WHERE user_id=$1 AND id=$2",[userId,id]);return r.rows[0]||null;}
-export async function dashboardStats(userId:string){const r=await query<{total:string;interviews:string;assessments:string;offers:string;rejections:string}>(`SELECT count(*) FILTER(WHERE is_relevant)::text total,count(*) FILTER(WHERE category='INTERVIEW')::text interviews,count(*) FILTER(WHERE category='ASSESSMENT')::text assessments,count(*) FILTER(WHERE category='OFFER')::text offers,count(*) FILTER(WHERE category='REJECTION')::text rejections FROM emails WHERE user_id=$1`,[userId]);return r.rows[0];}
-export async function getFeedback(userId:string){const r=await query<{text:string;is_relevant:boolean;category:Category;field:string}>(`SELECT (e.subject||'
-'||e.body_text) text,f.correct_is_relevant is_relevant,f.correct_category category,f.correct_field field FROM training_feedback f JOIN emails e ON e.id=f.email_id WHERE f.user_id=$1 ORDER BY f.created_at DESC LIMIT 500`,[userId]);return r.rows;}
-export async function addFeedback(userId:string,emailId:string,isRelevant:boolean,category:string,field:string){await query("INSERT INTO training_feedback(id,user_id,email_id,correct_is_relevant,correct_category,correct_field) VALUES($1,$2,$3,$4,$5,$6)",[crypto.randomUUID(),userId,emailId,isRelevant,category,field]);await query("UPDATE emails SET is_relevant=$1,category=$2,detected_field=$3,review_status='CORRECTED',updated_at=NOW() WHERE id=$4 AND user_id=$5",[isRelevant,category,field,emailId,userId]);}
+import type { EmailAnalysis, Category } from "@/ai/types";
+export type EmailRow = { id: string; user_id: string; gmail_message_id: string; sender_name: string | null; sender_email: string | null; subject: string; body_text: string; snippet: string; received_at: Date; is_relevant: boolean; professional_score: number; category: Category; category_score: number; detected_field: string; field_score: number; company: string | null; role_title: string | null; opportunity_type: string | null; required_action: string | null; deadline: Date | null; summary: string | null; review_status: string; };
+export async function emailExists(userId: string, gmailId: string) { const r = await query("SELECT 1 FROM emails WHERE user_id=$1 AND gmail_message_id=$2", [userId, gmailId]); return !!r.rowCount; }
+export async function insertEmail(userId: string, m: any, a: EmailAnalysis) { const id = crypto.randomUUID(); await query(`INSERT INTO emails(id,user_id,gmail_message_id,gmail_thread_id,sender_name,sender_email,subject,body_text,snippet,received_at,is_relevant,professional_score,category,category_score,detected_field,field_score,company,role_title,opportunity_type,required_action,deadline,summary,analysis_reasons) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)`, [id, userId, m.gmailMessageId, m.gmailThreadId, m.senderName, m.senderEmail, m.subject, m.bodyText, m.snippet, m.receivedAt, a.isRelevant, a.professionalScore, a.category, a.categoryScore, a.detectedField, a.fieldScore, a.company, a.roleTitle, a.opportunityType, a.requiredAction, a.deadline, a.summary, JSON.stringify(a.reasons)]); return id; }
+export async function listEmails(userId: string, opts: { relevant?: boolean; category?: string; field?: string; limit?: number } = {}) { const where = ["user_id=$1"], params: any[] = [userId]; if (opts.relevant !== undefined) { params.push(opts.relevant); where.push(`is_relevant=$${params.length}`); } if (opts.category) { params.push(opts.category); where.push(`category=$${params.length}`); } if (opts.field) { params.push(opts.field); where.push(`detected_field=$${params.length}`); } params.push(Math.min(opts.limit || 100, 500)); const r = await query<EmailRow>(`SELECT * FROM emails WHERE ${where.join(" AND ")} ORDER BY received_at DESC LIMIT $${params.length}`, params); return r.rows; }
+export async function getEmail(userId: string, id: string) { const r = await query<EmailRow>("SELECT * FROM emails WHERE user_id=$1 AND id=$2", [userId, id]); return r.rows[0] || null; }
+export async function dashboardStats(userId: string) { const r = await query<{ total: string; interviews: string; assessments: string; offers: string; rejections: string }>(`SELECT count(*) FILTER(WHERE is_relevant)::text total,count(*) FILTER(WHERE category='INTERVIEW')::text interviews,count(*) FILTER(WHERE category='ASSESSMENT')::text assessments,count(*) FILTER(WHERE category='OFFER')::text offers,count(*) FILTER(WHERE category='REJECTION')::text rejections FROM emails WHERE user_id=$1`, [userId]); return r.rows[0]; }
+export async function getFeedback(userId: string) {
+    const r = await query<{
+        text: string;
+        is_relevant: boolean;
+        category: Category;
+        field: string;
+    }>(
+        `SELECT
+      (e.subject || '\n\n' || e.body_text) AS text,
+      f.correct_is_relevant AS is_relevant,
+      f.correct_category AS category,
+      f.correct_field AS field
+    FROM training_feedback f
+    JOIN emails e ON e.id = f.email_id
+    WHERE f.user_id = $1
+    ORDER BY f.created_at DESC
+    LIMIT 500`,
+        [userId]
+    );
+
+    return r.rows.map((row) => ({
+        text: row.text,
+        isRelevant: row.is_relevant,
+        category: row.category,
+        field: row.field,
+    }));
+}
+export async function addFeedback(userId: string, emailId: string, isRelevant: boolean, category: string, field: string) { await query("INSERT INTO training_feedback(id,user_id,email_id,correct_is_relevant,correct_category,correct_field) VALUES($1,$2,$3,$4,$5,$6)", [crypto.randomUUID(), userId, emailId, isRelevant, category, field]); await query("UPDATE emails SET is_relevant=$1,category=$2,detected_field=$3,review_status='CORRECTED',updated_at=NOW() WHERE id=$4 AND user_id=$5", [isRelevant, category, field, emailId, userId]); }
