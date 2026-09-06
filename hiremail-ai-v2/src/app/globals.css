@@ -27,6 +27,32 @@
     --radius-sm: 12px;
     --radius-md: 18px;
     --radius-lg: 26px;
+
+
+    /* ========================================= */
+    /* VIDEO BACKGROUND CONTROLS */
+    /* عدلي القيم هنا لاحقًا إذا تبين */
+    /* ========================================= */
+
+    /* قوة الغباش */
+    --video-blur: 9px;
+
+    /* لون الغباش */
+    --video-blur-color: rgba(241, 238, 226, 0.08);
+
+    /* ألوان الطبقة فوق الفيديو */
+    --video-overlay-color-1: rgba(248, 245, 232, 0.44);
+    --video-overlay-color-2: rgba(243, 239, 224, 0.56);
+    --video-overlay-color-3: rgba(246, 242, 231, 0.67);
+
+    /* تشبع الفيديو */
+    --video-saturation: 0.82;
+
+    /* سطوع الفيديو */
+    --video-brightness: 0.96;
+
+    /* التباين */
+    --video-contrast: 0.92;
 }
 
 html {
@@ -69,7 +95,8 @@ body {
     background: var(--bg);
 }
 
-/* Videos */
+
+/* الفيديو نفسه */
 
 .background-video {
     position: absolute;
@@ -83,49 +110,84 @@ body {
 
     transform: scale(1.04);
 
+    /*
+      عدلي ألوان الفيديو من :root فوق
+    */
+    filter:
+        saturate(var(--video-saturation)) brightness(var(--video-brightness)) contrast(var(--video-contrast));
+
     pointer-events: none;
 }
 
-/* Desktop is default */
+
+/* اللابتوب يظهر افتراضيًا */
 
 .background-desktop {
     display: block;
 }
 
+
+/* الجوال مخفي افتراضيًا */
+
 .background-mobile {
     display: none;
 }
 
-/* Blur layer */
+
+/* ================================== */
+/* BLUR فوق الفيديو */
+/* ================================== */
 
 .background-blur {
     position: absolute;
     inset: -25px;
 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    /*
+      عدلي قوة الغباش من:
+      --video-blur
+    */
+    backdrop-filter: blur(var(--video-blur));
+    -webkit-backdrop-filter: blur(var(--video-blur));
 
-    background: rgba(247, 248, 246, 0.08);
+    /*
+      عدلي لون الغباش من:
+      --video-blur-color
+    */
+    background: var(--video-blur-color);
 
     pointer-events: none;
 }
 
-/* Light veil so UI stays readable */
+
+/* ================================== */
+/* COLOR OVERLAY */
+/* ================================== */
 
 .background-overlay {
     position: absolute;
     inset: 0;
 
+    /*
+      هذه الطبقة تتحكم بدرجة اللون فوق الفيديو.
+
+      إذا تبين الفيديو أوضح:
+      قللي آخر رقم في rgba
+
+      إذا تبينه أهدأ وأفتح:
+      زيدي آخر رقم
+    */
+
     background:
         linear-gradient(180deg,
-            rgba(247, 248, 246, 0.54) 0%,
-            rgba(247, 248, 246, 0.68) 55%,
-            rgba(247, 248, 246, 0.78) 100%);
+            var(--video-overlay-color-1) 0%,
+            var(--video-overlay-color-2) 52%,
+            var(--video-overlay-color-3) 100%);
 
     pointer-events: none;
 }
 
-/* Everything in the app stays above video */
+
+/* محتوى الموقع فوق الفيديو */
 
 .site-content {
     position: relative;
@@ -145,51 +207,230 @@ select {
     font: inherit;
 }
 
-/* ---------------------------------- */
+/* ================================== */
 /* NAVIGATION */
-/* ---------------------------------- */
+/* ================================== */
 
-nav {
-    height: 70px;
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-bottom: 1px solid rgba(226, 231, 227, 0.9);
+.main-nav {
+    width: min(1180px, calc(100% - 40px));
+    min-height: 68px;
+
+    margin: 14px auto 0;
+    padding: 8px 10px 8px 16px;
+
+    position: sticky;
+    top: 14px;
+    z-index: 1000;
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 20px;
+
+    /* لون البار */
+    background: rgba(255, 255, 255, 0.66);
+
+    /* غباش البار */
+    backdrop-filter: blur(24px) saturate(135%);
+    -webkit-backdrop-filter: blur(24px) saturate(135%);
+
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 20px;
+
+    box-shadow:
+        0 12px 40px rgba(27, 42, 34, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+    animation: navEnter 0.5s ease both;
+}
+
+
+/* ================================ */
+/* اسم المشروع */
+/* ================================ */
+
+.nav-brand {
+    justify-self: start;
 
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 10px;
 
-    padding: 0 max(24px, calc((100vw - 1180px) / 2));
-
-    position: sticky;
-    top: 0;
-    z-index: 100;
-
-    animation: navEnter 0.45s ease both;
+    min-width: 0;
 }
+
+.brand-icon {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 13px;
+
+    background: var(--primary);
+    color: white;
+
+    font-size: 17px;
+    font-weight: 800;
+
+    box-shadow: 0 8px 20px rgba(37, 55, 47, 0.18);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.nav-brand:hover .brand-icon {
+    transform: rotate(-5deg) translateY(-2px);
+
+    box-shadow:
+        0 12px 25px rgba(37, 55, 47, 0.24);
+}
+
+.brand-copy {
+    display: flex;
+    flex-direction: column;
+
+    line-height: 1.2;
+}
+
+.brand-copy strong {
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+.brand-copy small {
+    margin-top: 3px;
+
+    font-size: 10px;
+    color: var(--text-soft);
+
+    letter-spacing: 0.03em;
+}
+
+
+/* ================================ */
+/* روابط المنتصف */
+/* ================================ */
 
 .navlinks {
     display: flex;
-    gap: 16px;
     align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+    padding: 5px;
+
+    border-radius: 14px;
+
+    background: rgba(239, 244, 240, 0.62);
 }
 
-.navlinks form {
+.nav-link {
+    padding: 8px 15px;
+
+    border-radius: 10px;
+
+    color: var(--text-soft);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary);
+
+    background: rgba(255, 255, 255, 0.9);
+
+    transform: translateY(-1px);
+}
+
+
+/* ================================ */
+/* المستخدم */
+/* ================================ */
+
+.nav-user {
+    justify-self: end;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.user-chip {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 5px 9px 5px 6px;
+
+    border: 1px solid rgba(224, 230, 225, 0.9);
+    border-radius: 13px;
+
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.user-avatar {
+    width: 31px;
+    height: 31px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 10px;
+
+    background: var(--primary-soft);
+    color: var(--primary);
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.user-name {
+    max-width: 100px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.nav-user form {
+    display: block;
     margin: 0;
 }
 
-.linkbtn {
+.logout-btn {
     background: transparent;
-    color: var(--text);
-    padding: 8px 10px;
-    border-radius: 10px;
-    transition: background 0.2s ease, transform 0.2s ease;
+    color: var(--text-soft);
+
+    padding: 9px 11px;
+
+    box-shadow: none;
+
+    font-size: 13px;
+    font-weight: 700;
 }
 
-.linkbtn:hover {
-    background: var(--surface-soft);
-    transform: translateY(-1px);
+.logout-btn:hover {
+    background: rgba(159, 61, 56, 0.08);
+    color: var(--danger);
+
+    box-shadow: none;
+    transform: none;
 }
 
 /* ---------------------------------- */
@@ -504,7 +745,7 @@ td small {
 /* AUTH */
 /* ---------------------------------- */
 
-/* .auth {
+.auth {
     min-height: 100vh;
     display: grid;
     place-items: center;
@@ -514,17 +755,6 @@ td small {
         radial-gradient(circle at 15% 20%, rgba(220, 232, 223, 0.85), transparent 28%),
         radial-gradient(circle at 85% 80%, rgba(230, 236, 231, 0.8), transparent 30%),
         var(--bg);
-} */
-
-auth {
-    min-height: 100vh;
-
-    display: grid;
-    place-items: center;
-
-    padding: 24px;
-
-    background: transparent;
 }
 
 .authcard {
@@ -1193,36 +1423,149 @@ select:focus {
 }
 
 /* ================================== */
+/* NAVIGATION — TABLET */
+/* ================================== */
+
+@media (max-width: 850px) {
+
+    .main-nav {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .brand-copy small {
+        display: none;
+    }
+
+    .user-name {
+        display: none;
+    }
+}
+
+
+/* ================================== */
+/* MOBILE */
+/* ================================== */
+
+@media (max-width: 600px) {
+
+    .main-nav {
+        width: calc(100% - 20px);
+        min-height: 60px;
+
+        top: 8px;
+        margin-top: 8px;
+
+        padding: 7px;
+
+        gap: 6px;
+
+        border-radius: 17px;
+    }
+
+    .brand-icon {
+        width: 35px;
+        height: 35px;
+
+        flex-basis: 35px;
+
+        border-radius: 11px;
+
+        font-size: 14px;
+    }
+
+    .brand-copy strong {
+        font-size: 13px;
+    }
+
+    .navlinks {
+        gap: 2px;
+        padding: 3px;
+    }
+
+    .nav-link {
+        padding: 7px 9px;
+        font-size: 12px;
+    }
+
+    .user-chip {
+        display: none;
+    }
+
+    .logout-btn {
+        padding: 7px 8px;
+
+        font-size: 0;
+    }
+
+    .logout-btn::after {
+        content: "↪";
+
+        font-size: 20px;
+        line-height: 1;
+    }
+}
+
+
+/* جوالات صغيرة جدًا */
+
+@media (max-width: 390px) {
+
+    .brand-copy {
+        display: none;
+    }
+
+    .main-nav {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .navlinks {
+        justify-self: center;
+    }
+}
+
+
+/* ================================== */
 /* VIDEO — MOBILE */
 /* ================================== */
 
 @media (max-width: 800px) {
 
+    /* نخفي فيديو اللابتوب */
     .background-desktop {
         display: none;
     }
 
+    /* ونظهر فيديو الجوال */
     .background-mobile {
         display: block;
     }
 
     .background-video {
         object-position: center;
+
         transform: scale(1.06);
     }
 
     .background-blur {
         inset: -20px;
 
+        /*
+          غباش الجوال
+          عدليه إذا تبين
+        */
         backdrop-filter: blur(7px);
         -webkit-backdrop-filter: blur(7px);
     }
 
     .background-overlay {
+        /*
+          ألوان خاصة للجوال
+          عدلي الأرقام الأخيرة حسب رغبتك
+        */
         background:
             linear-gradient(180deg,
-                rgba(247, 248, 246, 0.58) 0%,
-                rgba(247, 248, 246, 0.70) 55%,
-                rgba(247, 248, 246, 0.82) 100%);
+                rgba(248, 245, 232, 0.50) 0%,
+                rgba(243, 239, 224, 0.62) 55%,
+                rgba(246, 242, 231, 0.73) 100%);
     }
 }
