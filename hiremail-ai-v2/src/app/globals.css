@@ -504,7 +504,7 @@ td small {
 /* AUTH */
 /* ---------------------------------- */
 
-.auth {
+/* .auth {
     min-height: 100vh;
     display: grid;
     place-items: center;
@@ -514,6 +514,17 @@ td small {
         radial-gradient(circle at 15% 20%, rgba(220, 232, 223, 0.85), transparent 28%),
         radial-gradient(circle at 85% 80%, rgba(230, 236, 231, 0.8), transparent 30%),
         var(--bg);
+} */
+
+auth {
+    min-height: 100vh;
+
+    display: grid;
+    place-items: center;
+
+    padding: 24px;
+
+    background: transparent;
 }
 
 .authcard {
