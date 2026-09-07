@@ -7,9 +7,7 @@ export function Nav({ name }: { name: string }) {
     return (
         <nav className="main-nav">
 
-            {/* اسم المشروع */}
             <Link href="/" className="nav-brand">
-
                 <span className="brand-icon">
                     H
                 </span>
@@ -18,14 +16,15 @@ export function Nav({ name }: { name: string }) {
                     <strong>HireMail AI</strong>
                     <small>Career Inbox</small>
                 </div>
-
             </Link>
 
 
-            {/* روابط التنقل */}
             <div className="navlinks">
 
-                <Link href="/" className="nav-link">
+                <Link
+                    href="/"
+                    className="nav-link"
+                >
                     الرئيسية
                 </Link>
 
@@ -33,13 +32,12 @@ export function Nav({ name }: { name: string }) {
                     href="/settings"
                     className="nav-link"
                 >
-                    تخصيص
+                    الحساب
                 </Link>
 
             </div>
 
 
-            {/* المستخدم */}
             <div className="nav-user">
 
                 <div className="user-chip">
@@ -56,14 +54,12 @@ export function Nav({ name }: { name: string }) {
 
 
                 <form action={logoutAction}>
-
                     <button
                         type="submit"
                         className="logout-btn"
                     >
                         تسجيل الخروج
                     </button>
-
                 </form>
 
             </div>
