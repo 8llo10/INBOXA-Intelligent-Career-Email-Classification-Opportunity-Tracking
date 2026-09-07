@@ -1,79 +1,114 @@
 import Link from "next/link";
+
 import { loginAction } from "../actions";
 
 export default async function Login({
-  searchParams,
+    searchParams,
 }: {
-  searchParams: Promise<Record<string, string>>;
+    searchParams: Promise<Record<string, string>>;
 }) {
-  const q = await searchParams;
+    const q = await searchParams;
 
-  return (
-    <main className="auth">
-      <section className="card authcard">
+    return (
+        <main className="auth">
 
-        {/* Brand */}
-        <div className="auth-brand">
-          <span className="eyebrow">HireMail AI</span>
+            <section className="card authcard">
 
-          <h1>جاهزين نلقط المهم من بريدك؟</h1>
+                {/* Brand */}
+                <div className="auth-brand">
 
-          <p className="auth-description">
-            سجّل دخولك وخل HireMail AI يرتب لك الرسائل المهنية
-            ويعرض لك الفرص اللي تستحق انتباهك.
-          </p>
-        </div>
+                    <img
+                        src="/images/hiremail-logo.png"
+                        alt="HireMail AI"
+                        className="auth-logo-image"
+                    />
 
-        {/* Login Error */}
-        {q.error && (
-          <div className="error" role="alert">
-            البريد الإلكتروني أو كلمة المرور غير صحيحة.
-          </div>
-        )}
+                    <span className="eyebrow">
+                        HireMail AI
+                    </span>
 
-        {/* Login Form */}
-        <form action={loginAction} className="auth-form">
-          <label>
-            <span>البريد الإلكتروني</span>
+                    <h1>
+                        جاهزين نلقط المهم من بريدك؟
+                    </h1>
 
-            <input
-              name="email"
-              type="email"
-              placeholder="name@example.com"
-              autoComplete="email"
-              required
-            />
-          </label>
+                    <p className="auth-description">
+                        سجّل دخولك وخل HireMail AI يرتب لك الرسائل المهنية
+                        ويعرض لك الفرص اللي تستحق انتباهك.
+                    </p>
 
-          <label>
-            <span>كلمة المرور</span>
+                </div>
 
-            <input
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              minLength={8}
-              autoComplete="current-password"
-              required
-            />
-          </label>
 
-          <button type="submit">
-            تسجيل الدخول
-          </button>
-        </form>
+                {/* Login Error */}
+                {q.error && (
+                    <div
+                        className="error"
+                        role="alert"
+                    >
+                        البريد الإلكتروني أو كلمة المرور غير صحيحة.
+                    </div>
+                )}
 
-        {/* Registration */}
-        <div className="auth-footer">
-          <p>
-            أول مرة هنا؟{" "}
-            <Link href="/register">
-              أنشئ حسابك
-            </Link>
-          </p>
-        </div>
 
-      </section>
-    </main>
-  );
+                {/* Login Form */}
+                <form
+                    action={loginAction}
+                    className="auth-form"
+                >
+
+                    <label>
+                        <span>
+                            البريد الإلكتروني
+                        </span>
+
+                        <input
+                            name="email"
+                            type="email"
+                            placeholder="name@example.com"
+                            autoComplete="email"
+                            required
+                        />
+                    </label>
+
+
+                    <label>
+                        <span>
+                            كلمة المرور
+                        </span>
+
+                        <input
+                            name="password"
+                            type="password"
+                            placeholder="••••••••"
+                            minLength={8}
+                            autoComplete="current-password"
+                            required
+                        />
+                    </label>
+
+
+                    <button type="submit">
+                        تسجيل الدخول
+                    </button>
+
+                </form>
+
+
+                {/* Registration */}
+                <div className="auth-footer">
+
+                    <p>
+                        أول مرة هنا؟{" "}
+
+                        <Link href="/register">
+                            أنشئ حسابك
+                        </Link>
+                    </p>
+
+                </div>
+
+            </section>
+
+        </main>
+    );
 }

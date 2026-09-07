@@ -14,6 +14,11 @@ export default async function Register({
 
                 {/* Brand */}
                 <div className="auth-brand">
+                    <img
+                        src="/images/hiremail-logo.png"
+                        alt="HireMail AI"
+                        className="auth-logo-image"
+                    />
                     <span className="eyebrow">HireMail AI</span>
 
                     <h1>خلّ بريدك يشتغل لصالحك ✦</h1>

@@ -9,7 +9,11 @@ export function Nav({ name }: { name: string }) {
 
             <Link href="/" className="nav-brand">
                 <span className="brand-icon">
-                    H
+                    <img
+                        src="/images/hiremail-logo.png"
+                        alt="HireMail AI"
+                        className="brand-logo-image"
+                    />
                 </span>
 
                 <div className="brand-copy">
